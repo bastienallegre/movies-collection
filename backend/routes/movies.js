@@ -1,45 +1,39 @@
 import express from 'express';
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
 const router = express.Router();
 
-// Données temporaires en mémoire (à remplacer par une vraie BDD plus tard)
-let movies = [
-  {
-    id: '1',
-    titre: 'Inception',
-    annee: 2010,
-    realisateur: 'Christopher Nolan',
-    genres: ['Science-Fiction', 'Thriller'],
-    duree: 148,
-    statut: 'vu',
-    note: 9.5,
-    commentaire: 'Chef-d\'œuvre absolu ! Les niveaux de rêves sont fascinants.',
-    affiche_url: 'https://image.tmdb.org/t/p/w500/9gk7adHYeDvHkCSEqAvQNLV5Uge.jpg',
-    date_ajout: new Date('2024-01-15').toISOString()
-  },
-  {
-    id: '2',
-    titre: 'Interstellar',
-    annee: 2014,
-    realisateur: 'Christopher Nolan',
-    genres: ['Science-Fiction', 'Drame'],
-    duree: 169,
-    statut: 'vu',
-    note: 9.0,
-    commentaire: 'Émotionnellement puissant avec une science incroyable.',
-    affiche_url: 'https://image.tmdb.org/t/p/w500/gEU2QniE6E77NI6lCU6MxlNBvIx.jpg',
-    date_ajout: new Date('2024-01-20').toISOString()
-  },
-  {
-    id: '3',
-    titre: 'Dune',
-    annee: 2021,
-    realisateur: 'Denis Villeneuve',
-    genres: ['Science-Fiction', 'Aventure'],
-    duree: 155,
-    statut: 'a_voir',
-    date_ajout: new Date('2024-02-01').toISOString()
+// Obtenir le chemin du répertoire actuel en ESM
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Chemin vers le fichier JSON
+const moviesFilePath = path.join(__dirname, '../data/movies.json');
+
+// Fonction pour lire les films depuis le fichier JSON
+function readMovies() {
+  try {
+    const data = fs.readFileSync(moviesFilePath, 'utf8');
+    return JSON.parse(data);
+  } catch (error) {
+    console.error('Erreur lors de la lecture du fichier movies.json:', error);
+    return [];
   }
-];
+}
+
+// Fonction pour sauvegarder les films dans le fichier JSON
+function saveMovies(movies) {
+  try {
+    fs.writeFileSync(moviesFilePath, JSON.stringify(movies, null, 2), 'utf8');
+  } catch (error) {
+    console.error('Erreur lors de la sauvegarde du fichier movies.json:', error);
+  }
+}
+
+// Charger les données au démarrage
+let movies = readMovies();
 
 // GET /api/movies - Liste tous les films
 router.get('/', (req, res) => {
@@ -144,6 +138,7 @@ router.post('/', (req, res) => {
   };
   
   movies.push(newMovie);
+  saveMovies(movies); // Sauvegarder dans le fichier JSON
   
   res.status(201).json(newMovie);
 });
@@ -162,6 +157,8 @@ router.put('/:id', (req, res) => {
     id: req.params.id // S'assure que l'ID ne change pas
   };
   
+  saveMovies(movies); // Sauvegarder dans le fichier JSON
+  
   res.json(movies[index]);
 });
 
@@ -174,6 +171,7 @@ router.delete('/:id', (req, res) => {
   }
   
   movies.splice(index, 1);
+  saveMovies(movies); // Sauvegarder dans le fichier JSON
   
   res.json({ message: 'Film supprimé avec succès' });
 });

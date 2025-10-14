@@ -5,6 +5,8 @@ import cors from 'cors';
 
 // Import des routes
 import moviesRoutes from './routes/movies.js';
+import statsRoutes from './routes/stats.js';
+import genresRoutes from './routes/genres.js';
 
 // Configuration de dotenv
 dotenv.config();
@@ -39,6 +41,8 @@ app.get('/', (req, res) => {
 
 // Routes de l'API
 app.use('/api/movies', moviesRoutes);
+app.use('/api/stats', statsRoutes);
+app.use('/api/genres', genresRoutes);
 
 // Route 404 - Pas trouvé
 app.use((req, res) => {
