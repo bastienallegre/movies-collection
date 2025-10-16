@@ -1,0 +1,47 @@
+[
+  {
+    "id": "col_001",
+    "nom": "Chefs-d'œuvre de Christopher Nolan",
+    "description": "La filmographie exceptionnelle de Christopher Nolan, maître du suspense et de la science-fiction cérébrale.",
+    "is_public": true,
+    "date_creation": "2024-01-15T10:00:00.000Z",
+    "nombre_films": 3,
+    "movie_ids": ["mov_001", "mov_002", "mov_006"]
+  },
+  {
+    "id": "col_002",
+    "nom": "Science-Fiction Incontournables",
+    "description": "Les films de science-fiction qui ont marqué l'histoire du cinéma.",
+    "is_public": true,
+    "date_creation": "2024-02-01T14:30:00.000Z",
+    "nombre_films": 4,
+    "movie_ids": ["mov_001", "mov_002", "mov_003", "mov_007"]
+  },
+  {
+    "id": "col_003",
+    "nom": "Films à revoir absolument",
+    "description": "Ma sélection personnelle de films que je veux absolument revoir.",
+    "is_public": false,
+    "date_creation": "2024-03-10T09:15:00.000Z",
+    "nombre_films": 2,
+    "movie_ids": ["mov_004", "mov_005"]
+  },
+  {
+    "id": "col_004",
+    "nom": "Thrillers psychologiques",
+    "description": "Films qui jouent avec l'esprit et la perception de la réalité.",
+    "is_public": true,
+    "date_creation": "2024-03-20T16:45:00.000Z",
+    "nombre_films": 3,
+    "movie_ids": ["mov_001", "mov_005", "mov_011"]
+  },
+  {
+    "id": "col_005",
+    "nom": "Épopées à grand spectacle",
+    "description": "Films épiques avec des productions massives et des histoires grandioses.",
+    "is_public": true,
+    "date_creation": "2024-04-01T11:20:00.000Z",
+    "nombre_films": 2,
+    "movie_ids": ["mov_009", "mov_010"]
+  }
+]

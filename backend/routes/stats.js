@@ -1,31 +1,15 @@
 import express from 'express';
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
+import { readData } from '../utils/dataManager.js';
+import { generateStatsLinks, generateDirectorLinks, generateGenreLinks } from '../utils/hateoas.js';
 
 const router = express.Router();
 
-// Obtenir le chemin du répertoire actuel en ESM
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-// Chemin vers le fichier JSON
-const moviesFilePath = path.join(__dirname, '../data/movies.json');
-
-// Fonction pour lire les films depuis le fichier JSON
-function readMovies() {
-  try {
-    const data = fs.readFileSync(moviesFilePath, 'utf8');
-    return JSON.parse(data);
-  } catch (error) {
-    console.error('Erreur lors de la lecture du fichier movies.json:', error);
-    return [];
-  }
-}
-
 // GET /api/stats - Récupère les statistiques de la collection
 router.get('/', (req, res) => {
-  const movies = readMovies();
+  const movies = readData('movies');
+  const directors = readData('directors');
+  const genres = readData('genres');
+  const collections = readData('collections');
   
   // Calcul des statistiques
   const total_films = movies.length;
@@ -39,20 +23,56 @@ router.get('/', (req, res) => {
     ? Math.round((filmsAvecNote.reduce((sum, m) => sum + m.note, 0) / filmsAvecNote.length) * 10) / 10
     : 0;
   
-  // Genres préférés (top 5)
-  const genresCount = {};
+  // Top genres (top 5)
+  const genreStats = {};
   movies.forEach(movie => {
-    if (movie.genres && Array.isArray(movie.genres)) {
-      movie.genres.forEach(genre => {
-        genresCount[genre] = (genresCount[genre] || 0) + 1;
+    if (movie.genre_ids && Array.isArray(movie.genre_ids)) {
+      movie.genre_ids.forEach(genreId => {
+        genreStats[genreId] = (genreStats[genreId] || 0) + 1;
       });
     }
   });
   
-  const genres_preferes = Object.entries(genresCount)
-    .map(([genre, count]) => ({ genre, count }))
-    .sort((a, b) => b.count - a.count)
-    .slice(0, 5);
+  const top_genres = Object.entries(genreStats)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 5)
+    .map(([genreId, count]) => {
+      const genre = genres.find(g => g.id === genreId);
+      return genre ? {
+        genre: {
+          id: genre.id,
+          nom: genre.nom,
+          _links: generateGenreLinks(genre)
+        },
+        count
+      } : null;
+    })
+    .filter(item => item !== null);
+  
+  // Top réalisateurs (top 5)
+  const directorStats = {};
+  movies.forEach(movie => {
+    if (movie.director_id) {
+      directorStats[movie.director_id] = (directorStats[movie.director_id] || 0) + 1;
+    }
+  });
+  
+  const top_directors = Object.entries(directorStats)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 5)
+    .map(([directorId, count]) => {
+      const director = directors.find(d => d.id === directorId);
+      return director ? {
+        director: {
+          id: director.id,
+          nom: director.nom,
+          prenom: director.prenom,
+          _links: generateDirectorLinks(director)
+        },
+        count
+      } : null;
+    })
+    .filter(item => item !== null);
   
   // Durée totale de visionnage (films vus uniquement)
   const duree_totale_visionnage = movies
@@ -65,8 +85,13 @@ router.get('/', (req, res) => {
     films_a_voir,
     films_en_cours,
     note_moyenne,
-    genres_preferes,
-    duree_totale_visionnage
+    duree_totale_visionnage,
+    total_collections: collections.length,
+    total_genres: genres.length,
+    total_directors: directors.length,
+    top_genres,
+    top_directors,
+    _links: generateStatsLinks()
   };
   
   res.json(stats);

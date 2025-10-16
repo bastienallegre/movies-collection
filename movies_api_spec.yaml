@@ -1,55 +1,66 @@
 openapi: 3.0.2
 info:
-  version: 1.0.0
+  version: 2.0.0
   title: API de gestion de collection de films
-  description: API REST pour gérer une collection personnelle de films avec statuts, notes et avis
+  description: |
+    API REST pour gérer une collection personnelle de films avec réalisateurs, genres et collections personnalisées.
+    Cette API suit les principes HATEOAS (Hypermedia As The Engine Of Application State).
   contact:
-    name: "Votre Nom"
-    email: votre.email@example.com
+    name: "Allegre Bastien"
+    email: bastien.allegre@etu.univ-grenoble-alpes.fr
 servers:
 - url: http://localhost:3000/api
   description: Serveur de développement local
+
 paths:
+  # ==================== MOVIES ====================
   /movies:
     get:
       tags:
-      - Film
-      summary: Liste tous les films de la collection
+        - Movies
+      summary: Liste tous les films
+      description: Récupère la liste complète des films avec pagination et filtres
       parameters:
-      - $ref: '#/components/parameters/pageParam'
-      - $ref: '#/components/parameters/limitParam'
-      - name: status
-        in: query
-        description: Filtre par statut (a_voir, vu, en_cours)
-        required: false
-        schema:
-          type: string
-          enum: [a_voir, vu, en_cours]
-      - name: genre
-        in: query
-        description: Filtre par genre
-        required: false
-        schema:
-          type: string
-      - name: sort
-        in: query
-        description: Trier par (date_ajout, note, annee, titre)
-        required: false
-        schema:
-          type: string
-          enum: [date_ajout, note, annee, titre]
-          default: date_ajout
-      - name: order
-        in: query
-        description: Ordre de tri (asc, desc)
-        required: false
-        schema:
-          type: string
-          enum: [asc, desc]
-          default: desc
+        - $ref: '#/components/parameters/pageParam'
+        - $ref: '#/components/parameters/limitParam'
+        - name: status
+          in: query
+          description: Filtre par statut de visionnage
+          schema:
+            type: string
+            enum: [a_voir, vu, en_cours]
+        - name: genre_id
+          in: query
+          description: Filtre par identifiant de genre
+          schema:
+            type: string
+        - name: director_id
+          in: query
+          description: Filtre par identifiant de réalisateur
+          schema:
+            type: string
+        - name: collection_id
+          in: query
+          description: Filtre par identifiant de collection
+          schema:
+            type: string
+        - name: sort
+          in: query
+          description: Champ de tri
+          schema:
+            type: string
+            enum: [titre, annee, note, date_ajout]
+            default: date_ajout
+        - name: order
+          in: query
+          description: Ordre de tri
+          schema:
+            type: string
+            enum: [asc, desc]
+            default: desc
       responses:
         "200":
-          description: Une collection de films est retournée
+          description: Liste des films retournée avec succès
           content:
             application/json:
               schema:
@@ -57,21 +68,24 @@ paths:
                 properties:
                   total:
                     type: integer
-                    description: Nombre total de films
+                    example: 127
                   page:
                     type: integer
-                    description: Page courante
+                    example: 0
                   limit:
                     type: integer
-                    description: Nombre de films par page
+                    example: 20
                   movies:
                     type: array
                     items:
-                      $ref: '#/components/schemas/Movie'
+                      $ref: '#/components/schemas/MovieWithLinks'
+                  _links:
+                    $ref: '#/components/schemas/PaginationLinks'
     post:
       tags:
-      - Film
-      summary: Ajoute un nouveau film à la collection
+        - Movies
+      summary: Ajoute un nouveau film
+      description: Crée un nouveau film dans la collection
       requestBody:
         required: true
         content:
@@ -80,46 +94,46 @@ paths:
               $ref: '#/components/schemas/MovieInput'
       responses:
         "201":
-          description: Le film a été ajouté avec succès
+          description: Film créé avec succès
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Movie'
+                $ref: '#/components/schemas/MovieWithLinks'
         "400":
           description: Données invalides
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 
   /movies/{id}:
     get:
       tags:
-      - Film
-      summary: Récupère les détails d'un film spécifique
+        - Movies
+      summary: Récupère un film spécifique
+      description: Retourne les détails complets d'un film avec ses relations
       parameters:
-      - name: id
-        in: path
-        description: L'identifiant unique du film
-        required: true
-        schema:
-          type: string
+        - $ref: '#/components/parameters/idParam'
       responses:
         "200":
-          description: Un film est retourné
+          description: Film retourné avec succès
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Movie'
+                $ref: '#/components/schemas/MovieDetailWithLinks'
         "404":
-          description: Le film n'existe pas
+          description: Film non trouvé
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
     put:
       tags:
-      - Film
-      summary: Met à jour les informations d'un film
+        - Movies
+      summary: Met à jour un film
+      description: Modifie les informations d'un film existant
       parameters:
-      - name: id
-        in: path
-        description: L'identifiant unique du film
-        required: true
-        schema:
-          type: string
+        - $ref: '#/components/parameters/idParam'
       requestBody:
         required: true
         content:
@@ -128,49 +142,52 @@ paths:
               $ref: '#/components/schemas/MovieInput'
       responses:
         "200":
-          description: Le film a été mis à jour avec succès
+          description: Film mis à jour avec succès
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Movie'
+                $ref: '#/components/schemas/MovieWithLinks'
         "404":
-          description: Le film n'existe pas
-        "400":
-          description: Données invalides
+          description: Film non trouvé
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
     delete:
       tags:
-      - Film
-      summary: Supprime un film de la collection
+        - Movies
+      summary: Supprime un film
+      description: Retire un film de la collection
       parameters:
-      - name: id
-        in: path
-        description: L'identifiant unique du film
-        required: true
-        schema:
-          type: string
+        - $ref: '#/components/parameters/idParam'
       responses:
-        "200":
-          description: Le film a été supprimé avec succès
+        "204":
+          description: Film supprimé avec succès
         "404":
-          description: Le film n'existe pas
+          description: Film non trouvé
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 
   /movies/search:
     get:
       tags:
-      - Film
-      summary: Recherche des films par titre
+        - Movies
+      summary: Recherche de films
+      description: Recherche des films par titre
       parameters:
-      - name: q
-        in: query
-        description: Terme de recherche
-        required: true
-        schema:
-          type: string
-      - $ref: '#/components/parameters/pageParam'
-      - $ref: '#/components/parameters/limitParam'
+        - name: q
+          in: query
+          required: true
+          description: Terme de recherche
+          schema:
+            type: string
+        - $ref: '#/components/parameters/pageParam'
+        - $ref: '#/components/parameters/limitParam'
       responses:
         "200":
-          description: Résultats de la recherche
+          description: Résultats de recherche
           content:
             application/json:
               schema:
@@ -181,44 +198,490 @@ paths:
                   movies:
                     type: array
                     items:
-                      $ref: '#/components/schemas/Movie'
+                      $ref: '#/components/schemas/MovieWithLinks'
+                  _links:
+                    type: object
+                    properties:
+                      self:
+                        $ref: '#/components/schemas/Link'
 
-  /stats:
+  # ==================== COLLECTIONS ====================
+  /collections:
     get:
       tags:
-      - Statistiques
-      summary: Récupère les statistiques de la collection
+        - Collections
+      summary: Liste toutes les collections
+      description: Récupère la liste des collections personnalisées
+      parameters:
+        - $ref: '#/components/parameters/pageParam'
+        - $ref: '#/components/parameters/limitParam'
       responses:
         "200":
-          description: Statistiques de la collection
+          description: Liste des collections
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Stats'
+                type: object
+                properties:
+                  total:
+                    type: integer
+                  page:
+                    type: integer
+                  limit:
+                    type: integer
+                  collections:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/CollectionWithLinks'
+                  _links:
+                    $ref: '#/components/schemas/PaginationLinks'
+    post:
+      tags:
+        - Collections
+      summary: Crée une nouvelle collection
+      description: Crée une collection personnalisée de films
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CollectionInput'
+      responses:
+        "201":
+          description: Collection créée
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CollectionWithLinks'
 
+  /collections/{id}:
+    get:
+      tags:
+        - Collections
+      summary: Récupère une collection
+      description: Retourne les détails d'une collection avec ses films
+      parameters:
+        - $ref: '#/components/parameters/idParam'
+      responses:
+        "200":
+          description: Collection retournée
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CollectionDetailWithLinks'
+        "404":
+          description: Collection non trouvée
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    put:
+      tags:
+        - Collections
+      summary: Met à jour une collection
+      parameters:
+        - $ref: '#/components/parameters/idParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CollectionInput'
+      responses:
+        "200":
+          description: Collection mise à jour
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CollectionWithLinks'
+    delete:
+      tags:
+        - Collections
+      summary: Supprime une collection
+      parameters:
+        - $ref: '#/components/parameters/idParam'
+      responses:
+        "204":
+          description: Collection supprimée
+        "404":
+          description: Collection non trouvée
+
+  /collections/{id}/movies:
+    get:
+      tags:
+        - Collections
+      summary: Liste les films d'une collection
+      description: Récupère tous les films appartenant à une collection
+      parameters:
+        - $ref: '#/components/parameters/idParam'
+        - $ref: '#/components/parameters/pageParam'
+        - $ref: '#/components/parameters/limitParam'
+      responses:
+        "200":
+          description: Liste des films de la collection
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  total:
+                    type: integer
+                  movies:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/MovieWithLinks'
+                  _links:
+                    type: object
+                    properties:
+                      self:
+                        $ref: '#/components/schemas/Link'
+                      collection:
+                        $ref: '#/components/schemas/Link'
+    post:
+      tags:
+        - Collections
+      summary: Ajoute un film à la collection
+      description: Associe un film existant à cette collection
+      parameters:
+        - $ref: '#/components/parameters/idParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - movie_id
+              properties:
+                movie_id:
+                  type: string
+                  description: ID du film à ajouter
+      responses:
+        "200":
+          description: Film ajouté à la collection
+        "404":
+          description: Collection ou film non trouvé
+
+  /collections/{id}/movies/{movie_id}:
+    delete:
+      tags:
+        - Collections
+      summary: Retire un film de la collection
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID de la collection
+          schema:
+            type: string
+        - name: movie_id
+          in: path
+          required: true
+          description: ID du film à retirer
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Film retiré de la collection
+        "404":
+          description: Collection ou film non trouvé
+
+  # ==================== GENRES ====================
   /genres:
     get:
       tags:
-      - Genre
-      summary: Liste tous les genres disponibles dans la collection
+        - Genres
+      summary: Liste tous les genres
+      description: Récupère la liste complète des genres
+      parameters:
+        - $ref: '#/components/parameters/pageParam'
+        - $ref: '#/components/parameters/limitParam'
       responses:
         "200":
           description: Liste des genres
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    genre:
-                      type: string
-                    count:
-                      type: integer
-                      description: Nombre de films dans ce genre
+                type: object
+                properties:
+                  total:
+                    type: integer
+                  genres:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/GenreWithLinks'
+                  _links:
+                    $ref: '#/components/schemas/PaginationLinks'
+    post:
+      tags:
+        - Genres
+      summary: Crée un nouveau genre
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GenreInput'
+      responses:
+        "201":
+          description: Genre créé
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenreWithLinks'
+
+  /genres/{id}:
+    get:
+      tags:
+        - Genres
+      summary: Récupère un genre
+      parameters:
+        - $ref: '#/components/parameters/idParam'
+      responses:
+        "200":
+          description: Genre retourné
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenreDetailWithLinks'
+        "404":
+          description: Genre non trouvé
+    put:
+      tags:
+        - Genres
+      summary: Met à jour un genre
+      parameters:
+        - $ref: '#/components/parameters/idParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GenreInput'
+      responses:
+        "200":
+          description: Genre mis à jour
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenreWithLinks'
+    delete:
+      tags:
+        - Genres
+      summary: Supprime un genre
+      parameters:
+        - $ref: '#/components/parameters/idParam'
+      responses:
+        "204":
+          description: Genre supprimé
+        "404":
+          description: Genre non trouvé
+
+  /genres/{id}/movies:
+    get:
+      tags:
+        - Genres
+      summary: Liste les films d'un genre
+      description: Récupère tous les films appartenant à un genre
+      parameters:
+        - $ref: '#/components/parameters/idParam'
+        - $ref: '#/components/parameters/pageParam'
+        - $ref: '#/components/parameters/limitParam'
+      responses:
+        "200":
+          description: Liste des films du genre
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  total:
+                    type: integer
+                  movies:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/MovieWithLinks'
+                  _links:
+                    type: object
+                    properties:
+                      self:
+                        $ref: '#/components/schemas/Link'
+                      genre:
+                        $ref: '#/components/schemas/Link'
+
+  # ==================== DIRECTORS ====================
+  /directors:
+    get:
+      tags:
+        - Directors
+      summary: Liste tous les réalisateurs
+      parameters:
+        - $ref: '#/components/parameters/pageParam'
+        - $ref: '#/components/parameters/limitParam'
+        - name: sort
+          in: query
+          description: Tri par nom ou nombre de films
+          schema:
+            type: string
+            enum: [nom, nombre_films]
+      responses:
+        "200":
+          description: Liste des réalisateurs
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  total:
+                    type: integer
+                  directors:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/DirectorWithLinks'
+                  _links:
+                    $ref: '#/components/schemas/PaginationLinks'
+    post:
+      tags:
+        - Directors
+      summary: Ajoute un nouveau réalisateur
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DirectorInput'
+      responses:
+        "201":
+          description: Réalisateur créé
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DirectorWithLinks'
+
+  /directors/{id}:
+    get:
+      tags:
+        - Directors
+      summary: Récupère un réalisateur
+      parameters:
+        - $ref: '#/components/parameters/idParam'
+      responses:
+        "200":
+          description: Réalisateur retourné avec sa filmographie
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DirectorDetailWithLinks'
+        "404":
+          description: Réalisateur non trouvé
+    put:
+      tags:
+        - Directors
+      summary: Met à jour un réalisateur
+      parameters:
+        - $ref: '#/components/parameters/idParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DirectorInput'
+      responses:
+        "200":
+          description: Réalisateur mis à jour
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DirectorWithLinks'
+    delete:
+      tags:
+        - Directors
+      summary: Supprime un réalisateur
+      parameters:
+        - $ref: '#/components/parameters/idParam'
+      responses:
+        "204":
+          description: Réalisateur supprimé
+        "404":
+          description: Réalisateur non trouvé
+
+  /directors/{id}/movies:
+    get:
+      tags:
+        - Directors
+      summary: Liste les films d'un réalisateur
+      description: Récupère la filmographie complète d'un réalisateur
+      parameters:
+        - $ref: '#/components/parameters/idParam'
+        - $ref: '#/components/parameters/pageParam'
+        - $ref: '#/components/parameters/limitParam'
+      responses:
+        "200":
+          description: Filmographie du réalisateur
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  total:
+                    type: integer
+                  movies:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/MovieWithLinks'
+                  _links:
+                    type: object
+                    properties:
+                      self:
+                        $ref: '#/components/schemas/Link'
+                      director:
+                        $ref: '#/components/schemas/Link'
+
+  # ==================== STATS ====================
+  /stats:
+    get:
+      tags:
+        - Statistiques
+      summary: Statistiques globales de la collection
+      responses:
+        "200":
+          description: Statistiques de la collection
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatsWithLinks'
 
 components:
+  parameters:
+    idParam:
+      name: id
+      in: path
+      required: true
+      description: Identifiant unique de la ressource
+      schema:
+        type: string
+    pageParam:
+      name: page
+      in: query
+      description: Numéro de page (commence à 0)
+      required: false
+      schema:
+        type: integer
+        minimum: 0
+        default: 0
+    limitParam:
+      name: limit
+      in: query
+      description: Nombre d'éléments par page
+      required: false
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 20
+
   schemas:
+    # ==================== MOVIE SCHEMAS ====================
     MovieInput:
       type: object
       required:
@@ -227,57 +690,45 @@ components:
       properties:
         titre:
           type: string
-          description: Titre du film
           example: "Inception"
         annee:
           type: integer
-          description: Année de sortie
+          minimum: 1888
           example: 2010
-        realisateur:
+        director_id:
           type: string
-          description: Nom du réalisateur
-          example: "Christopher Nolan"
-        genres:
+          description: ID du réalisateur
+        genre_ids:
           type: array
           items:
             type: string
-          description: Liste des genres
-          example: ["Science-Fiction", "Thriller"]
+          description: Liste des IDs de genres
         duree:
           type: integer
           description: Durée en minutes
           example: 148
         synopsis:
           type: string
-          description: Résumé du film
         statut:
           type: string
           enum: [a_voir, vu, en_cours]
-          description: Statut de visionnage
           default: "a_voir"
         note:
           type: number
           format: float
           minimum: 0
           maximum: 10
-          description: Note personnelle sur 10
-          example: 8.5
         commentaire:
           type: string
-          description: Avis personnel sur le film
         affiche_url:
           type: string
           format: uri
-          description: URL de l'affiche du film
         tmdb_id:
           type: integer
-          description: ID The Movie Database (optionnel)
         tags:
           type: array
           items:
             type: string
-          description: Tags personnalisés
-          example: ["chef-d'oeuvre", "mindfuck"]
 
     Movie:
       allOf:
@@ -289,77 +740,344 @@ components:
           properties:
             id:
               type: string
-              description: Identifiant unique du film
-              example: "507f1f77bcf86cd799439011"
             date_ajout:
               type: string
               format: date-time
-              description: Date d'ajout à la collection
-              example: "2024-03-15T14:30:00Z"
             date_visionnage:
               type: string
               format: date-time
-              description: Date de visionnage (si statut = vu)
-              example: "2024-03-20T20:00:00Z"
 
-    Stats:
+    MovieWithLinks:
+      allOf:
+        - $ref: '#/components/schemas/Movie'
+        - type: object
+          properties:
+            _links:
+              type: object
+              properties:
+                self:
+                  $ref: '#/components/schemas/Link'
+                director:
+                  $ref: '#/components/schemas/Link'
+                genres:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Link'
+                collections:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Link'
+
+    MovieDetailWithLinks:
+      allOf:
+        - $ref: '#/components/schemas/Movie'
+        - type: object
+          properties:
+            director:
+              $ref: '#/components/schemas/DirectorWithLinks'
+            genres:
+              type: array
+              items:
+                $ref: '#/components/schemas/GenreWithLinks'
+            collections:
+              type: array
+              items:
+                $ref: '#/components/schemas/CollectionWithLinks'
+            _links:
+              type: object
+              properties:
+                self:
+                  $ref: '#/components/schemas/Link'
+                update:
+                  $ref: '#/components/schemas/Link'
+                delete:
+                  $ref: '#/components/schemas/Link'
+
+    # ==================== COLLECTION SCHEMAS ====================
+    CollectionInput:
+      type: object
+      required:
+        - nom
+      properties:
+        nom:
+          type: string
+          example: "Films d'horreur préférés"
+        description:
+          type: string
+        is_public:
+          type: boolean
+          default: false
+
+    Collection:
+      allOf:
+        - $ref: '#/components/schemas/CollectionInput'
+        - type: object
+          required:
+            - id
+            - date_creation
+          properties:
+            id:
+              type: string
+            date_creation:
+              type: string
+              format: date-time
+            nombre_films:
+              type: integer
+
+    CollectionWithLinks:
+      allOf:
+        - $ref: '#/components/schemas/Collection'
+        - type: object
+          properties:
+            _links:
+              type: object
+              properties:
+                self:
+                  $ref: '#/components/schemas/Link'
+                movies:
+                  $ref: '#/components/schemas/Link'
+
+    CollectionDetailWithLinks:
+      allOf:
+        - $ref: '#/components/schemas/Collection'
+        - type: object
+          properties:
+            movies:
+              type: array
+              items:
+                $ref: '#/components/schemas/MovieWithLinks'
+            _links:
+              type: object
+              properties:
+                self:
+                  $ref: '#/components/schemas/Link'
+                update:
+                  $ref: '#/components/schemas/Link'
+                delete:
+                  $ref: '#/components/schemas/Link'
+                add_movie:
+                  $ref: '#/components/schemas/Link'
+
+    # ==================== GENRE SCHEMAS ====================
+    GenreInput:
+      type: object
+      required:
+        - nom
+      properties:
+        nom:
+          type: string
+          example: "Science-Fiction"
+        description:
+          type: string
+
+    Genre:
+      allOf:
+        - $ref: '#/components/schemas/GenreInput'
+        - type: object
+          required:
+            - id
+          properties:
+            id:
+              type: string
+            nombre_films:
+              type: integer
+
+    GenreWithLinks:
+      allOf:
+        - $ref: '#/components/schemas/Genre'
+        - type: object
+          properties:
+            _links:
+              type: object
+              properties:
+                self:
+                  $ref: '#/components/schemas/Link'
+                movies:
+                  $ref: '#/components/schemas/Link'
+
+    GenreDetailWithLinks:
+      allOf:
+        - $ref: '#/components/schemas/Genre'
+        - type: object
+          properties:
+            _links:
+              type: object
+              properties:
+                self:
+                  $ref: '#/components/schemas/Link'
+                movies:
+                  $ref: '#/components/schemas/Link'
+                update:
+                  $ref: '#/components/schemas/Link'
+                delete:
+                  $ref: '#/components/schemas/Link'
+
+    # ==================== DIRECTOR SCHEMAS ====================
+    DirectorInput:
+      type: object
+      required:
+        - nom
+        - prenom
+      properties:
+        nom:
+          type: string
+          example: "Nolan"
+        prenom:
+          type: string
+          example: "Christopher"
+        date_naissance:
+          type: string
+          format: date
+        nationalite:
+          type: string
+        biographie:
+          type: string
+        photo_url:
+          type: string
+          format: uri
+
+    Director:
+      allOf:
+        - $ref: '#/components/schemas/DirectorInput'
+        - type: object
+          required:
+            - id
+          properties:
+            id:
+              type: string
+            nombre_films:
+              type: integer
+
+    DirectorWithLinks:
+      allOf:
+        - $ref: '#/components/schemas/Director'
+        - type: object
+          properties:
+            _links:
+              type: object
+              properties:
+                self:
+                  $ref: '#/components/schemas/Link'
+                movies:
+                  $ref: '#/components/schemas/Link'
+
+    DirectorDetailWithLinks:
+      allOf:
+        - $ref: '#/components/schemas/Director'
+        - type: object
+          properties:
+            filmographie:
+              type: array
+              items:
+                $ref: '#/components/schemas/MovieWithLinks'
+            _links:
+              type: object
+              properties:
+                self:
+                  $ref: '#/components/schemas/Link'
+                movies:
+                  $ref: '#/components/schemas/Link'
+                update:
+                  $ref: '#/components/schemas/Link'
+                delete:
+                  $ref: '#/components/schemas/Link'
+
+    # ==================== STATS SCHEMAS ====================
+    StatsWithLinks:
       type: object
       properties:
         total_films:
           type: integer
-          description: Nombre total de films
-          example: 127
         films_vus:
           type: integer
-          description: Nombre de films vus
-          example: 89
         films_a_voir:
           type: integer
-          description: Nombre de films à voir
-          example: 35
         films_en_cours:
           type: integer
-          description: Nombre de films en cours
-          example: 3
         note_moyenne:
           type: number
-          format: float
-          description: Note moyenne des films vus
-          example: 7.8
-        genres_preferes:
+        duree_totale_visionnage:
+          type: integer
+        total_collections:
+          type: integer
+        total_genres:
+          type: integer
+        total_directors:
+          type: integer
+        top_genres:
           type: array
           items:
             type: object
             properties:
               genre:
-                type: string
+                $ref: '#/components/schemas/GenreWithLinks'
               count:
                 type: integer
-          description: Top 5 des genres les plus présents
-        duree_totale_visionnage:
-          type: integer
-          description: Durée totale de visionnage en minutes
-          example: 13260
+        top_directors:
+          type: array
+          items:
+            type: object
+            properties:
+              director:
+                $ref: '#/components/schemas/DirectorWithLinks'
+              count:
+                type: integer
+        _links:
+          type: object
+          properties:
+            self:
+              $ref: '#/components/schemas/Link'
+            movies:
+              $ref: '#/components/schemas/Link'
+            collections:
+              $ref: '#/components/schemas/Link'
+            genres:
+              $ref: '#/components/schemas/Link'
+            directors:
+              $ref: '#/components/schemas/Link'
 
-  parameters:
-    pageParam:
-      name: page
-      in: query
-      description: Numéro de page (commence à 0)
-      required: false
-      schema:
-        minimum: 0
-        type: integer
-        format: int32
-        default: 0
-    limitParam:
-      name: limit
-      in: query
-      description: Nombre maximum d'éléments par page
-      required: false
-      schema:
-        maximum: 100
-        minimum: 1
-        type: integer
-        format: int32
-        default: 20
+    # ==================== COMMON SCHEMAS ====================
+    Link:
+      type: object
+      required:
+        - href
+      properties:
+        href:
+          type: string
+          format: uri
+          example: "/api/movies/123"
+        method:
+          type: string
+          enum: [GET, POST, PUT, DELETE, PATCH]
+          default: "GET"
+        rel:
+          type: string
+          example: "self"
+
+    PaginationLinks:
+      type: object
+      properties:
+        self:
+          $ref: '#/components/schemas/Link'
+        first:
+          $ref: '#/components/schemas/Link'
+        prev:
+          $ref: '#/components/schemas/Link'
+        next:
+          $ref: '#/components/schemas/Link'
+        last:
+          $ref: '#/components/schemas/Link'
+
+    Error:
+      type: object
+      required:
+        - error
+      properties:
+        error:
+          type: string
+          example: "Ressource non trouvée"
+        code:
+          type: string
+          example: "NOT_FOUND"
+        details:
+          type: object

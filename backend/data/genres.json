@@ -1,0 +1,56 @@
+[
+  {
+    "id": "gen_001",
+    "nom": "Science-Fiction",
+    "description": "Films explorant des concepts futuristes, technologiques ou spéculatifs souvent basés sur des avancées scientifiques.",
+    "nombre_films": 5
+  },
+  {
+    "id": "gen_002",
+    "nom": "Thriller",
+    "description": "Films à suspense intense conçus pour maintenir le spectateur en haleine avec des rebondissements et de la tension.",
+    "nombre_films": 5
+  },
+  {
+    "id": "gen_003",
+    "nom": "Drame",
+    "description": "Films centrés sur le développement de personnages réalistes et des situations émotionnellement engageantes.",
+    "nombre_films": 7
+  },
+  {
+    "id": "gen_004",
+    "nom": "Crime",
+    "description": "Films tournant autour d'activités criminelles, d'enquêtes policières ou du monde du crime organisé.",
+    "nombre_films": 4
+  },
+  {
+    "id": "gen_005",
+    "nom": "Action",
+    "description": "Films mettant l'accent sur des séquences physiques spectaculaires, des combats et des cascades.",
+    "nombre_films": 3
+  },
+  {
+    "id": "gen_006",
+    "nom": "Aventure",
+    "description": "Films impliquant des voyages, des quêtes et des explorations dans des environnements extraordinaires.",
+    "nombre_films": 3
+  },
+  {
+    "id": "gen_007",
+    "nom": "Romance",
+    "description": "Films centrés sur des relations amoureuses et les émotions qui les accompagnent.",
+    "nombre_films": 1
+  },
+  {
+    "id": "gen_008",
+    "nom": "Fantaisie",
+    "description": "Films incorporant des éléments magiques, mythologiques ou surnaturels dans des mondes imaginaires.",
+    "nombre_films": 1
+  },
+  {
+    "id": "gen_009",
+    "nom": "Comédie",
+    "description": "Films conçus pour amuser et divertir avec humour, situations comiques et dialogues légers.",
+    "nombre_films": 1
+  }
+]

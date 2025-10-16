@@ -1,0 +1,97 @@
+{
+  "version": "2.0.0",
+  "description": "Configuration de la structure de données pour Movies Collection API v2",
+  "created": "2025-10-16",
+  "files": {
+    "directors": {
+      "path": "./directors.json",
+      "count": 11,
+      "id_prefix": "dir_",
+      "description": "Base de données des réalisateurs"
+    },
+    "genres": {
+      "path": "./genres.json",
+      "count": 9,
+      "id_prefix": "gen_",
+      "description": "Base de données des genres de films"
+    },
+    "collections": {
+      "path": "./collections.json",
+      "count": 5,
+      "id_prefix": "col_",
+      "description": "Collections personnalisées de films"
+    },
+    "movies": {
+      "path": "./movies_v2.json",
+      "count": 12,
+      "id_prefix": "mov_",
+      "description": "Base de données principale des films (version normalisée)"
+    },
+    "movies_legacy": {
+      "path": "./movies.json",
+      "count": 12,
+      "description": "Ancienne version (v1) - À conserver pour référence"
+    }
+  },
+  "relationships": {
+    "movies_to_directors": {
+      "type": "many-to-one",
+      "from": "movies.director_id",
+      "to": "directors.id",
+      "description": "Chaque film a un seul réalisateur"
+    },
+    "movies_to_genres": {
+      "type": "many-to-many",
+      "from": "movies.genre_ids[]",
+      "to": "genres.id",
+      "description": "Un film peut avoir plusieurs genres"
+    },
+    "collections_to_movies": {
+      "type": "many-to-many",
+      "from": "collections.movie_ids[]",
+      "to": "movies.id",
+      "description": "Une collection peut contenir plusieurs films"
+    }
+  },
+  "validation_rules": {
+    "directors": {
+      "required_fields": ["id", "nom", "prenom"],
+      "unique_fields": ["id"],
+      "id_format": "^dir_\\d{3}$"
+    },
+    "genres": {
+      "required_fields": ["id", "nom"],
+      "unique_fields": ["id", "nom"],
+      "id_format": "^gen_\\d{3}$"
+    },
+    "collections": {
+      "required_fields": ["id", "nom", "date_creation"],
+      "unique_fields": ["id"],
+      "id_format": "^col_\\d{3}$"
+    },
+    "movies": {
+      "required_fields": ["id", "titre", "annee", "director_id", "date_ajout"],
+      "unique_fields": ["id"],
+      "id_format": "^mov_\\d{3}$",
+      "statut_enum": ["a_voir", "vu", "en_cours"],
+      "note_range": [0, 10]
+    }
+  },
+  "statistics": {
+    "total_movies": 12,
+    "movies_watched": 8,
+    "movies_to_watch": 3,
+    "movies_in_progress": 1,
+    "total_directors": 11,
+    "total_genres": 9,
+    "total_collections": 5,
+    "average_rating": 9.0,
+    "total_watch_time_minutes": 1318
+  },
+  "migration_notes": [
+    "movies.json (v1) contient la structure originale avec réalisateurs et genres en texte",
+    "movies_v2.json contient la nouvelle structure normalisée avec IDs",
+    "Les deux fichiers coexistent pendant la phase de migration",
+    "Une fois l'API v2 complètement implémentée, movies.json peut être archivé"
+  ]
+}

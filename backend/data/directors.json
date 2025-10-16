@@ -1,0 +1,112 @@
+[
+  {
+    "id": "dir_001",
+    "nom": "Nolan",
+    "prenom": "Christopher",
+    "date_naissance": "1970-07-30",
+    "nationalite": "Britannique",
+    "biographie": "Christopher Nolan est un réalisateur, scénariste et producteur britannico-américain. Connu pour ses films à grand spectacle mêlant réflexion philosophique et prouesses techniques, il est considéré comme l'un des plus grands cinéastes contemporains.",
+    "photo_url": "https://image.tmdb.org/t/p/w500/xuAIuYSmsUzKlUMBFGVZaWsY3DZ.jpg",
+    "nombre_films": 3
+  },
+  {
+    "id": "dir_002",
+    "nom": "Villeneuve",
+    "prenom": "Denis",
+    "date_naissance": "1967-10-03",
+    "nationalite": "Canadienne",
+    "biographie": "Denis Villeneuve est un réalisateur et scénariste québécois. Il est reconnu pour ses films visuellement saisissants et ses adaptations ambitieuses de science-fiction.",
+    "photo_url": "https://image.tmdb.org/t/p/w500/7nKHnQmCbQZkLJ757W8QnGfKTwT.jpg",
+    "nombre_films": 1
+  },
+  {
+    "id": "dir_003",
+    "nom": "Coppola",
+    "prenom": "Francis Ford",
+    "date_naissance": "1939-04-07",
+    "nationalite": "Américaine",
+    "biographie": "Francis Ford Coppola est un réalisateur, producteur et scénariste américain. Il est l'un des cinéastes les plus influents du Nouveau Hollywood, célèbre pour la trilogie du Parrain.",
+    "photo_url": "https://image.tmdb.org/t/p/w500/3Pblihd6KjXliie9vj4iQJwbNPU.jpg",
+    "nombre_films": 1
+  },
+  {
+    "id": "dir_004",
+    "nom": "Tarantino",
+    "prenom": "Quentin",
+    "date_naissance": "1963-03-27",
+    "nationalite": "Américaine",
+    "biographie": "Quentin Tarantino est un réalisateur, scénariste, producteur et acteur américain. Son style distinctif mêle violence graphique, dialogues longs et références à la culture populaire.",
+    "photo_url": "https://image.tmdb.org/t/p/w500/1gjcpAa99FAOWGnrUvHEXXsRs7o.jpg",
+    "nombre_films": 1
+  },
+  {
+    "id": "dir_005",
+    "nom": "Wachowski",
+    "prenom": "Lana",
+    "date_naissance": "1965-06-21",
+    "nationalite": "Américaine",
+    "biographie": "Lana Wachowski est une réalisatrice, scénariste et productrice américaine. Avec sa sœur Lilly, elle a créé la franchise Matrix qui a révolutionné le cinéma de science-fiction.",
+    "photo_url": "https://image.tmdb.org/t/p/w500/4zOJRmkaPypTW4oZmYxcpfHAasn.jpg",
+    "nombre_films": 1
+  },
+  {
+    "id": "dir_006",
+    "nom": "Wachowski",
+    "prenom": "Lilly",
+    "date_naissance": "1967-12-29",
+    "nationalite": "Américaine",
+    "biographie": "Lilly Wachowski est une réalisatrice, scénariste et productrice américaine. Elle a co-créé Matrix avec sa sœur Lana, révolutionnant les effets spéciaux et la narration de science-fiction.",
+    "photo_url": "https://image.tmdb.org/t/p/w500/5vF0H26WfWvUfSNbyGBWqHw0Hpq.jpg",
+    "nombre_films": 1
+  },
+  {
+    "id": "dir_007",
+    "nom": "Zemeckis",
+    "prenom": "Robert",
+    "date_naissance": "1952-05-14",
+    "nationalite": "Américaine",
+    "biographie": "Robert Zemeckis est un réalisateur, scénariste et producteur américain. Pionnier des effets visuels, il est connu pour Retour vers le futur et Forrest Gump.",
+    "photo_url": "https://image.tmdb.org/t/p/w500/lqz7J9bVaCcqVMY8BMdpKDKJT4r.jpg",
+    "nombre_films": 1
+  },
+  {
+    "id": "dir_008",
+    "nom": "Scott",
+    "prenom": "Ridley",
+    "date_naissance": "1937-11-30",
+    "nationalite": "Britannique",
+    "biographie": "Ridley Scott est un réalisateur et producteur britannique. Maître des épopées visuelles, il a réalisé des classiques comme Alien, Blade Runner et Gladiator.",
+    "photo_url": "https://image.tmdb.org/t/p/w500/zABJmN9opmqD4orWl3KSdCaSo7Q.jpg",
+    "nombre_films": 1
+  },
+  {
+    "id": "dir_009",
+    "nom": "Jackson",
+    "prenom": "Peter",
+    "date_naissance": "1961-10-31",
+    "nationalite": "Néo-Zélandaise",
+    "biographie": "Peter Jackson est un réalisateur, scénariste et producteur néo-zélandais. Il est célèbre pour avoir adapté Le Seigneur des Anneaux en une trilogie épique qui a remporté 17 Oscars.",
+    "photo_url": "https://image.tmdb.org/t/p/w500/7BGqWoKTKHbLNqJXnwXVmD7HgAS.jpg",
+    "nombre_films": 1
+  },
+  {
+    "id": "dir_010",
+    "nom": "Fincher",
+    "prenom": "David",
+    "date_naissance": "1962-08-28",
+    "nationalite": "Américaine",
+    "biographie": "David Fincher est un réalisateur et producteur américain. Reconnu pour son perfectionnisme et ses thrillers psychologiques sombres, il a réalisé Fight Club, Seven et Gone Girl.",
+    "photo_url": "https://image.tmdb.org/t/p/w500/tpEczFclQZeKAiCeKZZ0adRvtfz.jpg",
+    "nombre_films": 1
+  },
+  {
+    "id": "dir_011",
+    "nom": "Bong",
+    "prenom": "Joon-ho",
+    "date_naissance": "1969-09-14",
+    "nationalite": "Sud-Coréenne",
+    "biographie": "Bong Joon-ho est un réalisateur et scénariste sud-coréen. Il mélange brillamment genres et satire sociale. Son film Parasite a remporté la Palme d'Or et 4 Oscars.",
+    "photo_url": "https://image.tmdb.org/t/p/w500/tFQnDHlRjn8afWMx52rWMiWP91b.jpg",
+    "nombre_films": 1
+  }
+]
