@@ -2,6 +2,10 @@
 import dotenv from 'dotenv';
 import express from 'express';
 import cors from 'cors';
+import swaggerUi from 'swagger-ui-express';
+import YAML from 'yamljs';
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
 
 // Import des routes
 import moviesRoutes from './routes/movies.js';
@@ -9,6 +13,13 @@ import statsRoutes from './routes/stats.js';
 import genresRoutes from './routes/genres.js';
 import directorsRoutes from './routes/directors.js';
 import collectionsRoutes from './routes/collections.js';
+
+// Configuration du chemin pour ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+// Charger le fichier YAML de spécification OpenAPI
+const swaggerDocument = YAML.load(join(__dirname, '../movies_api_spec.yaml'));
 
 // Configuration de dotenv
 dotenv.config();
@@ -33,7 +44,7 @@ app.get('/', (req, res) => {
   res.json({
     message: 'Bienvenue sur l\'API Movies Collection',
     version: '1.0.0',
-    documentation: 'https://github.com/bastienallegre/movies-collection',
+    documentation: '/api-docs',
     endpoints: {
       movies: '/api/movies',
       directors: '/api/directors',
@@ -50,6 +61,12 @@ app.get('/', (req, res) => {
     ]
   });
 });
+
+// Route pour la documentation Swagger
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument, {
+  customCss: '.swagger-ui .topbar { display: none }',
+  customSiteTitle: "Movies Collection API Documentation"
+}));
 
 // Routes de l'API
 app.use('/api/movies', moviesRoutes);
