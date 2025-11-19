@@ -1,7 +1,7 @@
 
 # Movies Collection — API et backend
 
-Ce dépôt contient une API REST simple pour gérer une collection de films. Elle fournit des endpoints pour les films, les réalisateurs, les genres, les collections et des statistiques basiques. L'API est développée avec Node.js et Express (module ES).
+Ce dépôt contient une API REST simple pour gérer une collection de films. Elle fournit des endpoints pour les films, les réalisateurs, les genres, les collections et des statistiques basiques. L'API est développée avec Node.js et Express.
 
 ## Caractéristiques principales
 
@@ -110,12 +110,4 @@ Les autres collections (`directors`, `genres`, `collections`) possèdent des str
 - `backend/utils/dataManager.js` : utilitaires pour lire/écrire les fichiers JSON, générer des IDs, et opérations utilitaires (recherche par id, compter films, ...).
 - `backend/utils/hateoas.js` : génération des liens HATEOAS pour chaque ressource.
 
-## Tests rapides
-
-Un script shell `backend/test-api.sh` est fourni pour exécuter quelques requêtes de test contre l'API locale. Exemple :
-
-```bash
-# Démarrer le serveur dans un terminal, puis dans un autre :
-cd backend
-./test-api.sh
 ```
