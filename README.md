@@ -110,4 +110,31 @@ Les autres collections (`directors`, `genres`, `collections`) possèdent des str
 - `backend/utils/dataManager.js` : utilitaires pour lire/écrire les fichiers JSON, générer des IDs, et opérations utilitaires (recherche par id, compter films, ...).
 - `backend/utils/hateoas.js` : génération des liens HATEOAS pour chaque ressource.
 
+## Méthodologie de développement
+
+### 1. Spécification OpenAPI en premier
+
+La première étape a été de créer la **documentation OpenAPI** (`movies_api_spec.yaml`) avant d'écrire une ligne de code du serveur Express. Cette spécification définit :
+- Tous les endpoints et leurs méthodes HTTP
+- Les schémas de données (films, réalisateurs, genres, collections)
+- Les paramètres de requête (filtres, tri, pagination)
+- Les codes de statut HTTP et les réponses attendues
+- Les exemples de requêtes et réponses
+
+### 2. Développement basé sur la spécification
+
+Une fois la spécification OpenAPI complète, le serveur Express a été développé en suivant cette documentation comme contrat. Les routes, contrôleurs et modèles ont été implémentés pour respecter ce qui avait été défini dans la spec.
+
+### Pourquoi cette approche ?
+
+Cette méthodologie "Design-First" présente plusieurs avantages majeurs :
+
+- **Plus naturel et logique** : Il est plus intuitif de d'abord définir *ce qu'on doit faire* (les besoins, les endpoints, les données) avant de le faire, plutôt que de coder quelque chose et de le décrire après coup.
+
+- **Meilleure planification** : Définir l'API en amont force à réfléchir à la structure complète, aux cas d'usage et à la cohérence de l'ensemble avant de se perdre dans l'implémentation.
+
+- **Validation continue** : Le code peut être vérifié en permanence par rapport à la spécification, garantissant la conformité.
+
+- **Évite les incohérences** : L'approche inverse (Code-First) conduit souvent à une documentation partielle, imprécise ou désynchronisée du code réel.
+
 ```
