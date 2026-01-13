@@ -6,6 +6,7 @@ import swaggerUi from 'swagger-ui-express';
 import YAML from 'yamljs';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
+import connectDB from './config/database.js';
 
 // Import des routes
 import moviesRoutes from './routes/movies.js';
@@ -91,8 +92,29 @@ app.use((err, req, res, next) => {
   });
 });
 
-// Démarrage du serveur
-app.listen(PORT, () => {
-  console.log(`Serveur démarré sur http://localhost:${PORT}`);
-  console.log(`API disponible sur http://localhost:${PORT}/api/movies`);
-});
+// Connexion à MongoDB et démarrage du serveur
+const startServer = async () => {
+  try {
+    // Connexion à MongoDB
+    const mongoUri = process.env.MONGODB_URI || 'mongodb://localhost:27017/movies_db';
+    await connectDB(mongoUri);
+
+    // Démarrage du serveur
+    app.listen(PORT, () => {
+      console.log(`Serveur démarré sur http://localhost:${PORT}`);
+      console.log(`Documentation API: http://localhost:${PORT}/api-docs`);
+      console.log(`Endpoints disponibles:`);
+      console.log(`   • Films: http://localhost:${PORT}/api/movies`);
+      console.log(`   • Réalisateurs: http://localhost:${PORT}/api/directors`);
+      console.log(`   • Genres: http://localhost:${PORT}/api/genres`);
+      console.log(`   • Collections: http://localhost:${PORT}/api/collections`);
+      console.log(`   • Stats: http://localhost:${PORT}/api/stats`);
+    });
+  } catch (error) {
+    console.error('Erreur lors du démarrage du serveur:', error.message);
+    process.exit(1);
+  }
+};
+
+// Lancer le serveur
+startServer();

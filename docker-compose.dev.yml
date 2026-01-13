@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  # Base de données MongoDB pour développement
+  mongodb:
+    image: mongo:latest
+    container_name: movies-mongodb-dev
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    environment:
+      MONGO_INITDB_DATABASE: movies_db
+    networks:
+      - movies-network
+
+  # Interface de gestion MongoDB (optionnel)
+  mongo-express:
+    image: mongo-express:latest
+    container_name: movies-mongo-express-dev
+    ports:
+      - "8081:8081"
+    environment:
+      ME_CONFIG_MONGODB_URL: mongodb://mongodb:27017/
+      ME_CONFIG_BASICAUTH: "false"
+    depends_on:
+      - mongodb
+    networks:
+      - movies-network
+
+volumes:
+  mongodb_data:
+
+networks:
+  movies-network:
+    driver: bridge
