@@ -20,7 +20,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 // Charger le fichier YAML de spécification OpenAPI
-const swaggerDocument = YAML.load(join(__dirname, '../movies_api_spec.yaml'));
+const swaggerDocument = YAML.load(join(__dirname, 'movies_api_spec.yaml'));
 
 // Configuration de dotenv
 dotenv.config();

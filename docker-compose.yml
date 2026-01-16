@@ -1,0 +1,84 @@
+version: '3.8'
+
+services:
+  # Base de données MongoDB
+  mongodb:
+    image: mongo:latest
+    container_name: movies-mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    environment:
+      MONGO_INITDB_DATABASE: movies_db
+    networks:
+      - movies-network
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/movies_db --quiet
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Interface de gestion MongoDB (optionnel)
+  mongo-express:
+    image: mongo-express:latest
+    container_name: movies-mongo-express
+    ports:
+      - "8081:8081"
+    environment:
+      ME_CONFIG_MONGODB_URL: mongodb://mongodb:27017/
+      ME_CONFIG_BASICAUTH: "false"
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    networks:
+      - movies-network
+
+  # Backend API
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: movies-backend
+    ports:
+      - "3000:3000"
+    environment:
+      - PORT=3000
+      - NODE_ENV=development
+      - MONGODB_URI=mongodb://mongodb:27017/movies_db
+      - FRONTEND_URL=http://localhost:4200
+    volumes:
+      - ./backend:/app
+      - ./movies_api_spec.yaml:/app/movies_api_spec.yaml
+      - /app/node_modules
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    networks:
+      - movies-network
+    command: sh -c "npm run migrate && npm run dev"
+
+  # Frontend Angular
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: movies-frontend
+    ports:
+      - "4200:4200"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    depends_on:
+      - backend
+    networks:
+      - movies-network
+    environment:
+      - NODE_ENV=development
+
+volumes:
+  mongodb_data:
+
+networks:
+  movies-network:
+    driver: bridge
