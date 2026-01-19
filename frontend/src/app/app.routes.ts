@@ -5,9 +5,15 @@ import { MovieDetailComponent } from './components/movies/movie-detail.component
 import { MovieFormComponent } from './components/movies/movie-form.component';
 import { DirectorsListComponent } from './components/directors/directors-list.component';
 import { DirectorFormComponent } from './components/directors/director-form.component';
+import { LoginComponent } from './components/auth/login.component';
+import { RegisterComponent } from './components/auth/register.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
+  
+  // Auth
+  { path: 'login', component: LoginComponent },
+  { path: 'register', component: RegisterComponent },
   
   // Movies
   { path: 'movies', component: MoviesListComponent },

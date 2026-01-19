@@ -14,6 +14,7 @@ import statsRoutes from './routes/stats.js';
 import genresRoutes from './routes/genres.js';
 import directorsRoutes from './routes/directors.js';
 import collectionsRoutes from './routes/collections.js';
+import authRoutes from './routes/auth.js';
 
 // Configuration du chemin pour ES modules
 const __filename = fileURLToPath(import.meta.url);
@@ -47,6 +48,7 @@ app.get('/', (req, res) => {
     version: '1.0.0',
     documentation: '/api-docs',
     endpoints: {
+      auth: '/api/auth',
       movies: '/api/movies',
       directors: '/api/directors',
       genres: '/api/genres',
@@ -54,6 +56,7 @@ app.get('/', (req, res) => {
       stats: '/api/stats'
     },
     features: [
+      'Authentification JWT (JSON Web Token)',
       'HATEOAS (Hypermedia As The Engine Of Application State)',
       'Normalisation des données (directors, genres, collections)',
       'Filtres avancés et pagination',
@@ -70,6 +73,7 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument, {
 }));
 
 // Routes de l'API
+app.use('/api/auth', authRoutes);
 app.use('/api/movies', moviesRoutes);
 app.use('/api/directors', directorsRoutes);
 app.use('/api/genres', genresRoutes);
@@ -104,6 +108,7 @@ const startServer = async () => {
       console.log(`Serveur démarré sur http://localhost:${PORT}`);
       console.log(`Documentation API: http://localhost:${PORT}/api-docs`);
       console.log(`Endpoints disponibles:`);
+      console.log(`   • Auth: http://localhost:${PORT}/api/auth`);
       console.log(`   • Films: http://localhost:${PORT}/api/movies`);
       console.log(`   • Réalisateurs: http://localhost:${PORT}/api/directors`);
       console.log(`   • Genres: http://localhost:${PORT}/api/genres`);

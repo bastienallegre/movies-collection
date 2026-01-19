@@ -19,7 +19,7 @@ export class GenreService {
   private http = inject(HttpClient);
   private apiConfig = inject(ApiConfigService);
   
-  private readonly endpoint = '/api/genres';
+  private readonly endpoint = '/genres';
 
   /**
    * Récupère la liste des genres avec pagination

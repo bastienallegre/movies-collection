@@ -19,7 +19,7 @@ export class DirectorService {
   private http = inject(HttpClient);
   private apiConfig = inject(ApiConfigService);
   
-  private readonly endpoint = '/api/directors';
+  private readonly endpoint = '/directors';
 
   /**
    * Récupère la liste des réalisateurs avec pagination

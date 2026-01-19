@@ -19,7 +19,7 @@ export class CollectionService {
   private http = inject(HttpClient);
   private apiConfig = inject(ApiConfigService);
   
-  private readonly endpoint = '/api/collections';
+  private readonly endpoint = '/collections';
 
   /**
    * Récupère la liste des collections avec pagination

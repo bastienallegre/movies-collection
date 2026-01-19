@@ -19,7 +19,7 @@ export class MovieService {
   private http = inject(HttpClient);
   private apiConfig = inject(ApiConfigService);
   
-  private readonly endpoint = '/api/movies';
+  private readonly endpoint = '/movies';
 
   /**
    * Récupère la liste des films avec filtres et pagination

@@ -33,7 +33,42 @@ Une fois le projet lancé, vous pouvez accéder à :
 - **Documentation API (Swagger)** : http://localhost:3000/api-docs
 - **Mongo Express** (interface MongoDB) : http://localhost:8081
 
-## 🛠️ Commandes utiles
+## � Authentification JWT
+
+Le projet intègre un système d'authentification par token JWT (JSON Web Token).
+
+### Endpoints d'authentification
+
+- **POST /api/auth/register** - Créer un compte
+- **POST /api/auth/login** - Se connecter
+- **GET /api/auth/me** - Obtenir son profil (authentifié)
+- **PUT /api/auth/password** - Changer son mot de passe (authentifié)
+
+### Routes protégées
+
+Les actions suivantes nécessitent une authentification (token JWT) :
+- ✅ **Créer** un film, réalisateur, genre ou collection
+- ✅ **Modifier** un film, réalisateur, genre ou collection
+- ✅ **Supprimer** un film, réalisateur, genre ou collection
+
+Les routes en **lecture seule** (GET) restent publiques.
+
+### Utilisation dans le frontend
+
+1. **Inscription** : Allez sur http://localhost:4200/register
+2. **Connexion** : Allez sur http://localhost:4200/login
+3. Le token est automatiquement ajouté à toutes vos requêtes
+
+### Variables d'environnement
+
+Dans `backend/.env` :
+```bash
+# IMPORTANT : Changez ces valeurs en production !
+JWT_SECRET=votre_secret_jwt_super_securise_changez_moi_en_production_123456
+JWT_EXPIRES_IN=7d
+```
+
+## �🛠️ Commandes utiles
 
 ### Arrêter le projet
 ```bash

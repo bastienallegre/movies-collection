@@ -1,20 +1,44 @@
 
 # Movies Collection — API et backend
 
-Ce dépôt contient une API REST simple pour gérer une collection de films. Elle fournit des endpoints pour les films, les réalisateurs, les genres, les collections et des statistiques basiques. L'API est développée avec Node.js et Express.
+Ce dépôt contient une API REST simple pour gérer une collection de films. Elle fournit des endpoints pour les films, les réalisateurs, les genres, les collections et des statistiques basiques. L'API est développée avec Node.js et Express, et intègre un système d'authentification JWT.
 
 ## Caractéristiques principales
 
-- Endpoints CRUD pour : films (`/api/movies`), réalisateurs (`/api/directors`), genres (`/api/genres`) et collections (`/api/collections`).
-- Recherche par titre, filtres (genre, réalisateur, collection), tri et pagination.
-- HATEOAS : les ressources retournées contiennent des liens d'action pour faciliter la navigation.
-- **Documentation interactive Swagger UI** disponible sur `/api-docs`.
-- Données stockées sous forme de JSON dans `backend/data/` (pas de base de données relationnelle).
+- **Authentification JWT** : Système de connexion/inscription avec tokens sécurisés
+- Endpoints CRUD pour : films (`/api/movies`), réalisateurs (`/api/directors`), genres (`/api/genres`) et collections (`/api/collections`)
+- Routes protégées : Création, modification et suppression nécessitent une authentification
+- Recherche par titre, filtres (genre, réalisateur, collection), tri et pagination
+- HATEOAS : les ressources retournées contiennent des liens d'action pour faciliter la navigation
+- **Documentation interactive Swagger UI** disponible sur `/api-docs`
+- Base de données MongoDB pour le stockage des données
 
 ## Prérequis
 
 - Node.js 18+ (ou une version compatible avec la syntaxe ES modules)
 - npm
+- MongoDB (ou utiliser Docker Compose)
+
+## 🔐 Authentification
+
+Le projet utilise JWT (JSON Web Token) pour l'authentification. 
+
+### Endpoints d'authentification
+
+- `POST /api/auth/register` - Créer un compte
+- `POST /api/auth/login` - Se connecter et obtenir un token
+- `GET /api/auth/me` - Obtenir son profil (nécessite authentification)
+- `PUT /api/auth/password` - Changer son mot de passe (nécessite authentification)
+
+### Routes protégées
+
+Les actions suivantes nécessitent un token JWT valide dans le header `Authorization: Bearer <token>` :
+
+- ✅ **POST** (création) de films, réalisateurs, genres ou collections
+- ✅ **PUT** (modification) de films, réalisateurs, genres ou collections
+- ✅ **DELETE** (suppression) de films, réalisateurs, genres ou collections
+
+Les routes en **lecture seule** (GET) restent publiques et accessibles sans authentification.
 
 ## Installation
 
