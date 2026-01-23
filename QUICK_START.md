@@ -1,6 +1,6 @@
-# 🎬 Movies Collection - Guide de démarrage rapide
+# Movies Collection - Guide de démarrage rapide
 
-## 🚀 Lancement ultra-simplifié avec Docker
+## Lancement simplifié avec Docker
 
 ### Option 1 : Tout automatique (recommandé)
 
@@ -12,8 +12,6 @@
 docker-compose up --build
 ```
 
-C'est tout ! 🎉
-
 ### Option 2 : Commandes manuelles
 
 ```bash
@@ -24,7 +22,7 @@ cp backend/.env.example backend/.env
 docker-compose up --build
 ```
 
-## 📌 URLs disponibles
+## URLs disponibles
 
 Une fois le projet lancé, vous pouvez accéder à :
 
@@ -33,7 +31,7 @@ Une fois le projet lancé, vous pouvez accéder à :
 - **Documentation API (Swagger)** : http://localhost:3000/api-docs
 - **Mongo Express** (interface MongoDB) : http://localhost:8081
 
-## � Authentification JWT
+## Authentification JWT
 
 Le projet intègre un système d'authentification par token JWT (JSON Web Token).
 
@@ -47,9 +45,9 @@ Le projet intègre un système d'authentification par token JWT (JSON Web Token)
 ### Routes protégées
 
 Les actions suivantes nécessitent une authentification (token JWT) :
-- ✅ **Créer** un film, réalisateur, genre ou collection
-- ✅ **Modifier** un film, réalisateur, genre ou collection
-- ✅ **Supprimer** un film, réalisateur, genre ou collection
+- **Créer** un film, réalisateur, genre ou collection
+- **Modifier** un film, réalisateur, genre ou collection
+- **Supprimer** un film, réalisateur, genre ou collection
 
 Les routes en **lecture seule** (GET) restent publiques.
 
@@ -63,12 +61,12 @@ Les routes en **lecture seule** (GET) restent publiques.
 
 Dans `backend/.env` :
 ```bash
-# IMPORTANT : Changez ces valeurs en production !
-JWT_SECRET=votre_secret_jwt_super_securise_changez_moi_en_production_123456
+# Changez ces valeurs en production
+JWT_SECRET=CodeSecretTrés123456789
 JWT_EXPIRES_IN=7d
 ```
 
-## �🛠️ Commandes utiles
+## Commandes utiles
 
 ### Arrêter le projet
 ```bash

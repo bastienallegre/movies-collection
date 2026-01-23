@@ -19,7 +19,7 @@ Ce dépôt contient une API REST simple pour gérer une collection de films. Ell
 - npm
 - MongoDB (ou utiliser Docker Compose)
 
-## 🔐 Authentification
+## Authentification
 
 Le projet utilise JWT (JSON Web Token) pour l'authentification. 
 
@@ -34,9 +34,9 @@ Le projet utilise JWT (JSON Web Token) pour l'authentification.
 
 Les actions suivantes nécessitent un token JWT valide dans le header `Authorization: Bearer <token>` :
 
-- ✅ **POST** (création) de films, réalisateurs, genres ou collections
-- ✅ **PUT** (modification) de films, réalisateurs, genres ou collections
-- ✅ **DELETE** (suppression) de films, réalisateurs, genres ou collections
+- **POST** (création) de films, réalisateurs, genres ou collections
+- **PUT** (modification) de films, réalisateurs, genres ou collections
+- **DELETE** (suppression) de films, réalisateurs, genres ou collections
 
 Les routes en **lecture seule** (GET) restent publiques et accessibles sans authentification.
 
@@ -160,5 +160,3 @@ Cette méthodologie "Design-First" présente plusieurs avantages majeurs :
 - **Validation continue** : Le code peut être vérifié en permanence par rapport à la spécification, garantissant la conformité.
 
 - **Évite les incohérences** : L'approche inverse (Code-First) conduit souvent à une documentation partielle, imprécise ou désynchronisée du code réel.
-
-```
