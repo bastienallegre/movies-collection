@@ -275,7 +275,7 @@ export class GenreFormComponent implements OnInit {
     request.subscribe({
       next: (genre) => {
         this.submitting.set(false);
-        this.router.navigate(['/genres', genre.id]);
+        this.router.navigate(['/genres']);
       },
       error: (err) => {
         this.error.set(err.message || 'Erreur lors de l\'enregistrement');

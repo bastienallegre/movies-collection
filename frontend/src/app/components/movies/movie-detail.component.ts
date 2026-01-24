@@ -2,6 +2,7 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { MovieService } from '../../services/movie.service';
+import { AuthService } from '../../services/auth.service';
 import { MovieDetail } from '../../models';
 
 @Component({
@@ -87,14 +88,16 @@ import { MovieDetail } from '../../models';
                 }
               </div>
 
-              <div class="action-buttons">
-                <button class="btn-primary" [routerLink]="['/movies', movie()!.id, 'edit']">
-                  ✏️ Modifier
-                </button>
-                <button class="btn-danger" (click)="deleteMovie()">
-                  🗑️ Supprimer
-                </button>
-              </div>
+              @if (authService.isAuthenticated()) {
+                <div class="action-buttons">
+                  <button class="btn-primary" [routerLink]="['/movies', movie()!.id, 'edit']">
+                    ✏️ Modifier
+                  </button>
+                  <button class="btn-danger" (click)="deleteMovie()">
+                    🗑️ Supprimer
+                  </button>
+                </div>
+              }
             </div>
           </div>
 
@@ -403,6 +406,7 @@ export class MovieDetailComponent implements OnInit {
   private movieService = inject(MovieService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
+  public authService = inject(AuthService);
 
   movie = signal<MovieDetail | null>(null);
   loading = signal(false);

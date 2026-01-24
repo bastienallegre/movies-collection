@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { MovieService } from '../../services/movie.service';
+import { AuthService } from '../../services/auth.service';
 import { Movie } from '../../models';
 
 @Component({
@@ -13,9 +14,11 @@ import { Movie } from '../../models';
     <div class="movies-container">
       <div class="header">
         <h1>📽️ Films</h1>
-        <button class="btn-primary" routerLink="/movies/new">
-          ➕ Ajouter un film
-        </button>
+        @if (authService.isAuthenticated()) {
+          <button class="btn-primary" routerLink="/movies/new">
+            ➕ Ajouter un film
+          </button>
+        }
       </div>
 
       <!-- Filtres -->
@@ -390,6 +393,7 @@ import { Movie } from '../../models';
 })
 export class MoviesListComponent implements OnInit {
   private movieService = inject(MovieService);
+  public authService = inject(AuthService);
 
   movies = signal<Movie[]>([]);
   loading = signal(false);

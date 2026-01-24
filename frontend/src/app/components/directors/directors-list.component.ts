@@ -2,6 +2,7 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { DirectorService } from '../../services/director.service';
+import { AuthService } from '../../services/auth.service';
 import { Director } from '../../models';
 
 @Component({
@@ -12,9 +13,11 @@ import { Director } from '../../models';
     <div class="directors-container">
       <div class="header">
         <h1>🎬 Réalisateurs</h1>
-        <button class="btn-primary" routerLink="/directors/new">
-          ➕ Ajouter un réalisateur
-        </button>
+        @if (authService.isAuthenticated()) {
+          <button class="btn-primary" routerLink="/directors/new">
+            ➕ Ajouter un réalisateur
+          </button>
+        }
       </div>
 
       @if (loading()) {
@@ -51,6 +54,13 @@ import { Director } from '../../models';
               <div class="stats">
                 <span class="stat">📽️ {{ director.nombre_films }} film{{ director.nombre_films > 1 ? 's' : '' }}</span>
               </div>
+
+              @if (authService.isAuthenticated()) {
+                <div class="director-actions" (click)="$event.stopPropagation()">
+                  <a [routerLink]="['/directors', director.id, 'edit']" class="btn-icon edit" title="Modifier">✏️</a>
+                  <button (click)="deleteDirector(director)" class="btn-icon delete" title="Supprimer">🗑️</button>
+                </div>
+              }
             </div>
           </div>
         }
@@ -59,9 +69,11 @@ import { Director } from '../../models';
       @if (directors().length === 0 && !loading()) {
         <div class="empty-state">
           <p>Aucun réalisateur pour le moment</p>
-          <button class="btn-primary" routerLink="/directors/new">
-            Ajouter le premier réalisateur
-          </button>
+          @if (authService.isAuthenticated()) {
+            <button class="btn-primary" routerLink="/directors/new">
+              Ajouter le premier réalisateur
+            </button>
+          }
         </div>
       }
     </div>
@@ -94,6 +106,7 @@ import { Director } from '../../models';
       cursor: pointer;
       font-weight: 600;
       transition: opacity 0.3s;
+      text-decoration: none;
     }
 
     .btn-primary:hover {
@@ -141,6 +154,8 @@ import { Director } from '../../models';
       box-shadow: 0 2px 8px rgba(0,0,0,0.1);
       cursor: pointer;
       transition: transform 0.3s, box-shadow 0.3s;
+      display: flex;
+      flex-direction: column;
     }
 
     .director-card:hover {
@@ -166,6 +181,9 @@ import { Director } from '../../models';
 
     .director-info {
       padding: 1.5rem;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
     }
 
     .director-info h3 {
@@ -183,12 +201,41 @@ import { Director } from '../../models';
     .stats {
       display: flex;
       gap: 1rem;
+      margin-bottom: 1rem;
     }
 
     .stat {
       font-size: 0.9rem;
       color: #667eea;
       font-weight: 600;
+    }
+
+    .director-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.5rem;
+      margin-top: auto;
+      padding-top: 1rem;
+      border-top: 1px solid #eee;
+    }
+
+    .btn-icon {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 1.1rem;
+      padding: 0.4rem;
+      border-radius: 4px;
+      transition: background-color 0.2s;
+      text-decoration: none;
+    }
+
+    .btn-icon:hover {
+      background-color: #f0f0f0;
+    }
+
+    .btn-icon.delete:hover {
+      background-color: #fee;
     }
 
     .empty-state {
@@ -205,6 +252,7 @@ import { Director } from '../../models';
 })
 export class DirectorsListComponent implements OnInit {
   private directorService = inject(DirectorService);
+  public authService = inject(AuthService);
 
   directors = signal<Director[]>([]);
   loading = signal(true);
@@ -223,6 +271,21 @@ export class DirectorsListComponent implements OnInit {
       error: (err) => {
         this.error.set('Erreur lors du chargement des réalisateurs');
         this.loading.set(false);
+      }
+    });
+  }
+
+  deleteDirector(director: Director) {
+    if (!confirm(`Êtes-vous sûr de vouloir supprimer ${director.prenom} ${director.nom} ?`)) {
+      return;
+    }
+
+    this.directorService.deleteDirector(director.id).subscribe({
+      next: () => {
+        this.directors.update(list => list.filter(d => d.id !== director.id));
+      },
+      error: (err) => {
+        this.error.set('Erreur lors de la suppression du réalisateur');
       }
     });
   }

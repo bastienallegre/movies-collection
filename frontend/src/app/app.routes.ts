@@ -5,6 +5,8 @@ import { MovieDetailComponent } from './components/movies/movie-detail.component
 import { MovieFormComponent } from './components/movies/movie-form.component';
 import { DirectorsListComponent } from './components/directors/directors-list.component';
 import { DirectorFormComponent } from './components/directors/director-form.component';
+import { GenresListComponent } from './components/genres/genres-list.component';
+import { GenreFormComponent } from './components/genres/genre-form.component';
 import { LoginComponent } from './components/auth/login.component';
 import { RegisterComponent } from './components/auth/register.component';
 
@@ -25,6 +27,11 @@ export const routes: Routes = [
   { path: 'directors', component: DirectorsListComponent },
   { path: 'directors/new', component: DirectorFormComponent },
   { path: 'directors/:id/edit', component: DirectorFormComponent },
+
+  // Genres
+  { path: 'genres', component: GenresListComponent },
+  { path: 'genres/new', component: GenreFormComponent },
+  { path: 'genres/:id/edit', component: GenreFormComponent },
   
   { path: '**', redirectTo: '' }
 ];
